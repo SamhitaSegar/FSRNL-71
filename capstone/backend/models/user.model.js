@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const userSchema = new mongoose.Schema(
   {
     username: {
@@ -7,18 +8,16 @@ const userSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
-
     email: {
       type: String,
       required: true,
       unique: true,
-      trim: true,
       lowercase: true,
+      trim: true,
     },
     password: {
       type: String,
       required: true,
-      min: [6, "password should be atleast of 6 digit"],
     },
     avatar: {
       public_id: {
@@ -27,12 +26,13 @@ const userSchema = new mongoose.Schema(
       },
       url: {
         type: String,
-        default: "",
+        default:
+          "https://res.cloudinary.com/demo/image/upload/v1/default-avatar.png",
       },
     },
     role: {
       type: String,
-      enum: ["user", "admin", "kitchenowner", "moderator"],
+      enum: ["user", "admin", "moderator"],
       default: "user",
     },
   },

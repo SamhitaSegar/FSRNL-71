@@ -9,28 +9,26 @@ const menuSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
-      trim: true,
+      default: "",
     },
     price: {
       type: Number,
       required: true,
-      min: [0, "price cannot be negative"],
+      min: 0,
     },
     category: {
       type: String,
-      enum: ["appetizer", "main", "dessert", "beverage", "snack"],
+      enum: ["veg", "non-veg", "egg", "vegan"],
+      required: true,
+    },
+    foodType: {
+      type: String,
+      enum: ["starter", "main-course", "dessert", "beverage", "snack", "thali"],
       required: true,
     },
     image: {
-      public_id: {
-        type: String,
-        default: "",
-      },
-      url: {
-        type: String,
-        default: "",
-      },
+      public_id: { type: String, default: "" },
+      url: { type: String, default: "" },
     },
     kitchen: {
       type: mongoose.Schema.Types.ObjectId,
@@ -40,6 +38,16 @@ const menuSchema = new mongoose.Schema(
     isAvailable: {
       type: Boolean,
       default: true,
+    },
+    rating: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 5,
+    },
+    totalOrders: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true },
