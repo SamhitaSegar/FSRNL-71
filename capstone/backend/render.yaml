@@ -1,0 +1,46 @@
+# Render Blueprint for the Cloud Kitchen backend.
+#
+# If your repository root is NOT this backend folder, set the service's
+# "Root Directory" to `capstone/backend` in the Render dashboard, or move
+# this file to the repo root and prefix the commands accordingly.
+services:
+  - type: web
+    name: cloud-kitchen-api
+    runtime: node
+    plan: free
+    # rootDir tells Render where package.json lives (relative to repo root)
+    rootDir: capstone/backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # PORT is provided automatically by Render; index.js reads process.env.PORT
+      - key: MONGO_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: EMAIL_SERVICE
+        value: gmail
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: CLIENT_URL
+        sync: false
+      - key: SERVER_URL
+        sync: false
