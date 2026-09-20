@@ -24,6 +24,19 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: "cloud-kitchen",
   storage,
+  // Bump this when the persisted shape changes. v1 drops any cart saved
+  // with the old mock data (placeholder kitchen id "foodie-menu") that
+  // would fail the backend's ObjectId checkout validation.
+  version: 1,
+  migrate: (state) => {
+    if (state && state.cart) {
+      return Promise.resolve({
+        ...state,
+        cart: { items: [], kitchenId: null },
+      });
+    }
+    return Promise.resolve(state);
+  },
   // only persist auth (token/user) and cart across reloads;
   // orders are refetched from the backend
   whitelist: ["auth", "cart"],

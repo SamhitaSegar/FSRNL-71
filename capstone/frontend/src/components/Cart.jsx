@@ -155,9 +155,12 @@ export default function Cart() {
                 </div>
               </dl>
 
-              <button className="btn-primary mt-6 w-full">
+              <Link
+                to="/checkout"
+                className="btn-primary mt-6 block w-full text-center"
+              >
                 Proceed to Checkout
-              </button>
+              </Link>
 
               <Link
                 to="/#menu"

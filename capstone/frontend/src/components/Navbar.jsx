@@ -32,6 +32,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const { isAuthenticated, user, token } = useSelector((state) => state.auth);
   const cartCount = useSelector(selectCartCount);
+  const isAdmin = user?.role === "admin";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -93,6 +94,14 @@ export default function Navbar() {
             <ThemeToggle />
             {isAuthenticated ? (
               <>
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="btn-ghost dark:text-white/85 dark:hover:text-brand"
+                  >
+                    Admin Dashboard
+                  </Link>
+                )}
                 <span className="text-sm font-semibold text-ink dark:text-white/85">
                   Hi, {user?.username || "there"}
                 </span>
@@ -162,6 +171,15 @@ export default function Navbar() {
           <li className="mt-2 flex gap-2 px-1">
             {isAuthenticated ? (
               <>
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="btn-ghost flex-1 border border-black/10 dark:border-white/15 dark:text-white/85"
+                    onClick={close}
+                  >
+                    Admin
+                  </Link>
+                )}
                 <span className="flex flex-1 items-center px-3 text-sm font-semibold text-ink dark:text-white/85">
                   Hi, {user?.username || "there"}
                 </span>

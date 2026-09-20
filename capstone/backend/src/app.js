@@ -8,6 +8,7 @@ import { fileURLToPath } from "url";
 import swaggerSpec from "../config/swagger.config.js";
 import adminRoute from "../routes/admin.route.js";
 import authRoute from "../routes/auth.route.js";
+import browseRoute from "../routes/browse.route.js";
 import kitchenRoute from "../routes/kitchen.route.js";
 import menuRoute from "../routes/menu.route.js";
 import orderRoute from "../routes/order.route.js";
@@ -44,6 +45,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // API routes
 app.use("/api/auth", authRoute);
 app.use("/api/admin", adminRoute);
+app.use("/api/browse", browseRoute);
 app.use("/api/kitchens", kitchenRoute);
 app.use("/api/menu", menuRoute);
 app.use("/api/orders", orderRoute);
