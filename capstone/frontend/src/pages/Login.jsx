@@ -1,54 +1,66 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import AuthLayout from '../components/AuthLayout.jsx'
-import AuthField from '../components/AuthField.jsx'
-import { loginUser } from '../api/auth.js'
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import AuthField from "../components/AuthField.jsx";
+import AuthLayout from "../components/AuthLayout.jsx";
+import { loginUser } from "../redux/slices/authSlice.js";
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function Login() {
-  const navigate = useNavigate()
-  const [form, setForm] = useState({ email: '', password: '' })
-  const [errors, setErrors] = useState({})
-  const [serverError, setServerError] = useState('')
-  const [submitting, setSubmitting] = useState(false)
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setForm((f) => ({ ...f, [name]: value }))
-    setErrors((prev) => ({ ...prev, [name]: undefined }))
-    setServerError('')
-  }
+    const { name, value } = e.target;
+    setForm((f) => ({ ...f, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
+    setServerError("");
+  };
 
   const validate = () => {
-    const next = {}
-    if (!form.email.trim()) next.email = 'Email is required.'
-    else if (!EMAIL_RE.test(form.email)) next.email = 'Enter a valid email address.'
-    if (!form.password) next.password = 'Password is required.'
-    return next
-  }
+    const next = {};
+    if (!form.email.trim()) next.email = "Email is required.";
+    else if (!EMAIL_RE.test(form.email))
+      next.email = "Enter a valid email address.";
+    if (!form.password) next.password = "Password is required.";
+    return next;
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    const found = validate()
-    setErrors(found)
-    if (Object.keys(found).length > 0) return
+    e.preventDefault();
+    const found = validate();
+    setErrors(found);
+    if (Object.keys(found).length > 0) return;
 
-    setSubmitting(true)
-    setServerError('')
+    setSubmitting(true);
+    setServerError("");
     try {
-      // Backend wiring: this hits POST {VITE_API_URL}/auth/login
-      await loginUser({ email: form.email.trim(), password: form.password })
-      navigate('/')
+      // Dispatches the loginUser thunk: POST {VITE_API_URL}/auth/login,
+      // stores the token, then fetches the profile. unwrap() throws on a
+      // rejected thunk so we can surface the server message.
+      await dispatch(
+        loginUser({ email: form.email.trim(), password: form.password }),
+      ).unwrap();
+      navigate("/");
     } catch (err) {
-      setServerError(err.message || 'Login failed. Please try again.')
+      setServerError(
+        typeof err === "string" ? err : "Login failed. Please try again.",
+      );
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-  }
+  };
 
   return (
-    <AuthLayout title="Welcome back 👋" subtitle="Sign in to continue ordering your favorites.">
+    <AuthLayout
+      title="Welcome back 👋"
+      subtitle="Sign in to continue ordering your favorites."
+    >
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
         {serverError && (
           <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
@@ -80,7 +92,10 @@ export default function Login() {
 
         <div className="flex items-center justify-between text-sm">
           <label className="flex items-center gap-2 text-muted dark:text-white/60">
-            <input type="checkbox" className="rounded border-black/20 text-brand focus:ring-brand" />
+            <input
+              type="checkbox"
+              className="rounded border-black/20 text-brand focus:ring-brand"
+            />
             Remember me
           </label>
           <a href="#" className="font-semibold text-brand hover:underline">
@@ -93,16 +108,19 @@ export default function Login() {
           disabled={submitting}
           className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {submitting ? 'Signing in…' : 'Sign In'}
+          {submitting ? "Signing in…" : "Sign In"}
         </button>
 
         <p className="text-center text-sm text-muted dark:text-white/60">
-          Don&apos;t have an account?{' '}
-          <Link to="/signup" className="font-semibold text-brand hover:underline">
+          Don&apos;t have an account?{" "}
+          <Link
+            to="/signup"
+            className="font-semibold text-brand hover:underline"
+          >
             Create one
           </Link>
         </p>
       </form>
     </AuthLayout>
-  )
+  );
 }

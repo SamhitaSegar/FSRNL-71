@@ -1,65 +1,41 @@
-// Centralized auth API helper.
+// Centralized axios instance for the backend API.
 //
 // Set the backend URL via a Vite env var in `.env`:
-//   VITE_API_URL=http://localhost:8000/api
-// Falls back to "/api" (handy if you proxy the backend through Vite).
+//   VITE_API_URL=http://localhost:3000/api
+// Falls back to "/api" (handy when proxying the backend through Vite, or
+// when the frontend is served by the backend itself in production).
 //
-// Each function returns the parsed JSON on success and throws an Error with
-// a readable message on failure, so pages can `try/catch` cleanly.
+// A request interceptor attaches the JWT (stored in localStorage on login)
+// as a Bearer token, which is what the backend's verifyToken middleware
+// expects. A response interceptor clears the token on 401 responses.
 
-const BASE_URL = import.meta.env.VITE_API_URL || '/api'
+import axios from "axios";
 
-async function request(path, { method = 'GET', body, token } = {}) {
-  const headers = { 'Content-Type': 'application/json' }
-  if (token) headers.Authorization = `Bearer ${token}`
+const BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
-  let res
-  try {
-    res = await fetch(`${BASE_URL}${path}`, {
-      method,
-      headers,
-      credentials: 'include', // send/receive httpOnly cookies if backend uses them
-      body: body ? JSON.stringify(body) : undefined,
-    })
-  } catch {
-    throw new Error('Network error. Is the backend running?')
+const api = axios.create({
+  baseURL: BASE_URL,
+  withCredentials: true, // send/receive httpOnly cookies if the backend uses them
+});
+
+// Attach the stored token to every request
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
+  return config;
+});
 
-  let data = null
-  try {
-    data = await res.json()
-  } catch {
-    // non-JSON response (e.g. 204) — leave data as null
-  }
+// Clear a stale token if the server rejects it
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+    }
+    return Promise.reject(error);
+  },
+);
 
-  if (!res.ok) {
-    const message = data?.message || data?.error || `Request failed (${res.status})`
-    throw new Error(message)
-  }
-
-  return data
-}
-
-// --- Endpoints (adjust paths to match your backend routes) ---
-
-export function loginUser({ email, password }) {
-  return request('/auth/login', {
-    method: 'POST',
-    body: { email, password },
-  })
-}
-
-export function signupUser({ username, email, password }) {
-  return request('/auth/register', {
-    method: 'POST',
-    body: { username, email, password },
-  })
-}
-
-export function logoutUser(token) {
-  return request('/auth/logout', { method: 'POST', token })
-}
-
-export function getCurrentUser(token) {
-  return request('/auth/me', { token })
-}
+export default api;

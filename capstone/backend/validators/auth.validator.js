@@ -2,8 +2,8 @@ const validateRegister = (req, res, next) => {
   const { username, email, password } = req.body;
   const errors = [];
 
-  if (!username || !username.trim().length < 3) {
-    errors.push("username should be of atleast 4 characters");
+  if (!username || username.trim().length < 3) {
+    errors.push("username should be at least 3 characters");
   }
   if (!email || !/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/.test(email)) {
     errors.push("please provide a valid email");
