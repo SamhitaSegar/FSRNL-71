@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -8,6 +8,7 @@ import {
   selectCartSubtotal,
 } from "../redux/slices/cartSlice.js";
 import { placeOrder, verifyPayment } from "../redux/slices/orderSlice.js";
+import { formatCurrency } from "../utils/format.js";
 import { RAZORPAY_KEY_ID, loadRazorpayScript } from "../utils/razorpay.js";
 
 const inputClass =
@@ -37,6 +38,11 @@ export default function Checkout() {
 
   const deliveryFee = items.length > 0 ? 2.99 : 0;
   const total = subtotal + deliveryFee;
+
+  // Checkout requires a signed-in user; send guests to login.
+  useEffect(() => {
+    if (!isAuthenticated) navigate("/login");
+  }, [isAuthenticated, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -323,7 +329,7 @@ export default function Checkout() {
                       </span>
                     </span>
                     <span className="font-semibold">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      {formatCurrency(item.price * item.quantity)}
                     </span>
                   </li>
                 ))}
@@ -333,19 +339,19 @@ export default function Checkout() {
                 <div className="flex justify-between">
                   <dt className="text-muted dark:text-white/60">Subtotal</dt>
                   <dd className="font-semibold dark:text-white">
-                    ${subtotal.toFixed(2)}
+                    {formatCurrency(subtotal)}
                   </dd>
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-muted dark:text-white/60">Delivery</dt>
                   <dd className="font-semibold dark:text-white">
-                    ${deliveryFee.toFixed(2)}
+                    {formatCurrency(deliveryFee)}
                   </dd>
                 </div>
                 <div className="flex justify-between border-t border-black/10 pt-2 dark:border-white/10">
                   <dt className="text-base font-bold dark:text-white">Total</dt>
                   <dd className="text-xl font-extrabold text-brand">
-                    ${total.toFixed(2)}
+                    {formatCurrency(total)}
                   </dd>
                 </div>
               </dl>
@@ -359,7 +365,7 @@ export default function Checkout() {
                   ? "Processing…"
                   : paymentMethod === "cod"
                     ? "Place Order"
-                    : `Pay $${total.toFixed(2)}`}
+                    : `Pay ${formatCurrency(total)}`}
               </button>
             </div>
           </aside>

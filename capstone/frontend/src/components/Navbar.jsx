@@ -102,9 +102,12 @@ export default function Navbar() {
                     Admin Dashboard
                   </Link>
                 )}
-                <span className="text-sm font-semibold text-ink dark:text-white/85">
+                <Link
+                  to="/profile"
+                  className="text-sm font-semibold text-ink transition hover:text-brand dark:text-white/85"
+                >
                   Hi, {user?.username || "there"}
-                </span>
+                </Link>
                 <button onClick={handleLogout} className="btn-primary">
                   Logout
                 </button>
@@ -180,9 +183,13 @@ export default function Navbar() {
                     Admin
                   </Link>
                 )}
-                <span className="flex flex-1 items-center px-3 text-sm font-semibold text-ink dark:text-white/85">
-                  Hi, {user?.username || "there"}
-                </span>
+                <Link
+                  to="/profile"
+                  onClick={close}
+                  className="btn-ghost flex-1 border border-black/10 dark:border-white/15 dark:text-white/85"
+                >
+                  Profile
+                </Link>
                 <button onClick={handleLogout} className="btn-primary flex-1">
                   Logout
                 </button>

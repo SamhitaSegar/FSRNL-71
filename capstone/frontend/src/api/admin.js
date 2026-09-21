@@ -69,3 +69,35 @@ export async function deleteMenuItem(menuId) {
   const { data } = await api.delete(`/menu/${menuId}`);
   return data;
 }
+
+// --- Platform admin (admin role required) ---
+//   GET /api/admin/stats   -> { stats }
+//   GET /api/admin/users   -> { count, users }
+//   GET /api/admin/orders  -> { count, orders }
+
+export async function getStats() {
+  const { data } = await api.get("/admin/stats");
+  return data.stats;
+}
+
+export async function getAllUsers() {
+  const { data } = await api.get("/admin/users");
+  return data.users || [];
+}
+
+export async function getAllOrders() {
+  const { data } = await api.get("/admin/orders");
+  return data.orders || [];
+}
+
+// PATCH /api/admin/orders/:orderId  -> { message, order }
+export async function updateOrder(orderId, updates) {
+  const { data } = await api.patch(`/admin/orders/${orderId}`, updates);
+  return data.order;
+}
+
+// DELETE /api/admin/orders/:orderId  -> { message }
+export async function deleteOrder(orderId) {
+  const { data } = await api.delete(`/admin/orders/${orderId}`);
+  return data;
+}

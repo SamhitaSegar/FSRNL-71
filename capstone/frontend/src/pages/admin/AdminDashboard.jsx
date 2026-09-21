@@ -1,11 +1,14 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 
 const navItems = [
+  { to: "/admin", label: "Overview", icon: "📊", end: true },
+  { to: "/admin/users", label: "Users", icon: "👥" },
+  { to: "/admin/orders", label: "All Orders", icon: "📦" },
   { to: "/admin/kitchens", label: "Kitchens", icon: "🏪" },
   { to: "/admin/menu", label: "Menu", icon: "🍽️" },
-  { to: "/admin/orders", label: "Orders", icon: "📦" },
+  { to: "/admin/kitchen-orders", label: "Kitchen Orders", icon: "🧾" },
 ];
 
 export default function AdminDashboard() {
@@ -26,12 +29,18 @@ export default function AdminDashboard() {
   return (
     <section className="min-h-screen bg-cream pt-24 dark:bg-night-soft">
       <div className="container-x pb-16">
+        <Link
+          to="/"
+          className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-muted transition hover:text-brand dark:text-white/60"
+        >
+          <span aria-hidden="true">←</span> Back to Home
+        </Link>
         <div className="mb-8">
           <span className="eyebrow">Admin</span>
-          <h1 className="section-title mt-2">Kitchen Dashboard</h1>
+          <h1 className="section-title mt-2">Admin Dashboard</h1>
           <p className="mt-2 text-muted dark:text-white/60">
-            Welcome{user?.username ? `, ${user.username}` : ""}. Manage your
-            kitchens, menu, and orders.
+            Welcome{user?.username ? `, ${user.username}` : ""}. Monitor users,
+            orders, kitchens, and revenue across the platform.
           </p>
         </div>
 
@@ -43,6 +52,7 @@ export default function AdminDashboard() {
                 <NavLink
                   key={item.to}
                   to={item.to}
+                  end={item.end}
                   className={({ isActive }) =>
                     `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${
                       isActive

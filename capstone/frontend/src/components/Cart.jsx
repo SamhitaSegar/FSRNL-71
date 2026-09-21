@@ -9,6 +9,7 @@ import {
   selectCartItems,
   selectCartSubtotal,
 } from "../redux/slices/cartSlice.js";
+import { formatCurrency } from "../utils/format.js";
 
 export default function Cart() {
   const dispatch = useDispatch();
@@ -81,7 +82,7 @@ export default function Cart() {
                     {item.name}
                   </h3>
                   <p className="mt-1 text-sm text-muted dark:text-white/60">
-                    ${item.price.toFixed(2)} each
+                    {formatCurrency(item.price)} each
                   </p>
 
                   <div className="mt-3 flex items-center gap-3">
@@ -116,7 +117,7 @@ export default function Cart() {
 
                 <div className="text-right">
                   <span className="text-lg font-extrabold text-brand">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    {formatCurrency(item.price * item.quantity)}
                   </span>
                 </div>
               </article>
@@ -134,13 +135,13 @@ export default function Cart() {
                 <div className="flex items-center justify-between">
                   <dt className="text-muted dark:text-white/60">Subtotal</dt>
                   <dd className="font-semibold dark:text-white">
-                    ${subtotal.toFixed(2)}
+                    {formatCurrency(subtotal)}
                   </dd>
                 </div>
                 <div className="flex items-center justify-between">
                   <dt className="text-muted dark:text-white/60">Delivery</dt>
                   <dd className="font-semibold dark:text-white">
-                    ${deliveryFee.toFixed(2)}
+                    {formatCurrency(deliveryFee)}
                   </dd>
                 </div>
                 <div className="border-t border-black/10 pt-3 dark:border-white/10">
@@ -149,7 +150,7 @@ export default function Cart() {
                       Total
                     </dt>
                     <dd className="text-xl font-extrabold text-brand">
-                      ${total.toFixed(2)}
+                      {formatCurrency(total)}
                     </dd>
                   </div>
                 </div>

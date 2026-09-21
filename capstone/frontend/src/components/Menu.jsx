@@ -7,6 +7,7 @@ import {
   incrementQuantity,
   selectCartItems,
 } from "../redux/slices/cartSlice.js";
+import { formatCurrency } from "../utils/format.js";
 
 export default function Menu() {
   const dispatch = useDispatch();
@@ -150,7 +151,7 @@ export default function Menu() {
                     )}
                     <div className="mt-4 flex items-center justify-between">
                       <span className="text-xl font-extrabold text-brand">
-                        ₹{Number(dish.price).toFixed(2)}
+                        {formatCurrency(dish.price)}
                       </span>
 
                       {qty === 0 ? (
